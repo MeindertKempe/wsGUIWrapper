@@ -1,0 +1,45 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+}
+
+group 'com.mkempe'
+version '1.0-SNAPSHOT'
+
+ext {
+    _mainClass = 'com.mkempe.wsguiwrapper.Main'
+}
+
+application {
+    mainClass = _mainClass
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+//    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.0'
+//    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.0'
+    implementation 'org.ow2.asm:asm:9.4'
+    implementation 'org.tomlj:tomlj:1.1.0'
+    implementation files("wsDisplay.jar")
+}
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': _mainClass,
+                'Class-Path': 'wsDisplay.jar'
+        )
+    }
+}
+
+shadowJar {
+    exclude 'wsDisplay.jar'
+}
+
+test {
+    useJUnitPlatform()
+}

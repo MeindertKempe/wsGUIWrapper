@@ -1,0 +1,7 @@
+build
+*.iml
+.gradle
+.idea
+lib
+wsDisplay.jar
+config.toml

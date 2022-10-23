@@ -1,0 +1,13 @@
+[network]
+#port = 8082
+
+[ui]
+#background = "/home/user/Pictures/background.png"
+
+#text_color.r = 0xcc
+#text_color.g = 0xcc
+#text_color.b = 0xcc
+
+#matrix_color.r = 0xff
+#matrix_color.g = 0x7e
+#matrix_color.b = 0x00
