@@ -122,6 +122,11 @@ public class Settings {
                 borderColorA = 0xffL;
             this.borderColor = new Color(borderColorR.intValue(), borderColorG.intValue(), borderColorB.intValue(), borderColorA.intValue());
         }
+
+        Boolean addText = toml.getBoolean("ui.add_modified_text");
+        if (addText != null) {
+            this.addText = addText;
+        }
     }
 
     public boolean verifyColor(Long color) {

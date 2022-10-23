@@ -13,7 +13,9 @@
 #matrix_color.g = 0x7e
 #matrix_color.b = 0x00
 
-#button_border_color.r = 0x99
-#button_border_color.g = 0x99
-#button_border_color.b = 0xff
+#button_border_color.r = 0xcc
+#button_border_color.g = 0xcc
+#button_border_color.b = 0xcc
 #button_border_color.a = 0xff
+
+#add_modified_text = true
