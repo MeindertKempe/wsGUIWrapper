@@ -89,33 +89,37 @@ public class Main {
         }
 
 
-        try {
-            // Use reflection to access ClassLoader defineClass
-            ClassLoader cl = ClassLoader.getSystemClassLoader();
-            Class<?> cls = Class.forName("java.lang.ClassLoader");
-            Method defineClass = cls.getDeclaredMethod("defineClass", String.class, byte[].class, int.class, int.class);
-            defineClass.setAccessible(true);
+        // If java agent didn't run (java 8 without -javaagent argument)
+        // try using classloader instead
+        if (!Agent.loaded()) {
+            try {
+                // Use reflection to access ClassLoader defineClass
+                ClassLoader cl = ClassLoader.getSystemClassLoader();
+                Class<?> cls = Class.forName("java.lang.ClassLoader");
+                Method defineClass = cls.getDeclaredMethod("defineClass", String.class, byte[].class, int.class, int.class);
+                defineClass.setAccessible(true);
 
-            // Define modified classes
-            Object[] clsArgs;
-            if (wsDisplayCw != null) {
-                clsArgs = new Object[]{"wsGUI.wsDisplayGUI", wsDisplayCw.toByteArray(), 0, wsDisplayCw.toByteArray().length};
-                defineClass.invoke(cl, clsArgs);
-            }
-            if (ioServerCw != null) {
-                clsArgs = new Object[]{"wsGUI.IOServer", ioServerCw.toByteArray(), 0, ioServerCw.toByteArray().length};
-                defineClass.invoke(cl, clsArgs);
-            }
-            if (ledMatrixCw != null) {
-                clsArgs = new Object[]{"modules.LedMatrix", ledMatrixCw.toByteArray(), 0, ledMatrixCw.toByteArray().length};
-                defineClass.invoke(cl, clsArgs);
-            }
+                // Define modified classes
+                Object[] clsArgs;
+                if (wsDisplayCw != null) {
+                    clsArgs = new Object[]{"wsGUI.wsDisplayGUI", wsDisplayCw.toByteArray(), 0, wsDisplayCw.toByteArray().length};
+                    defineClass.invoke(cl, clsArgs);
+                }
+                if (ioServerCw != null) {
+                    clsArgs = new Object[]{"wsGUI.IOServer", ioServerCw.toByteArray(), 0, ioServerCw.toByteArray().length};
+                    defineClass.invoke(cl, clsArgs);
+                }
+                if (ledMatrixCw != null) {
+                    clsArgs = new Object[]{"modules.LedMatrix", ledMatrixCw.toByteArray(), 0, ledMatrixCw.toByteArray().length};
+                    defineClass.invoke(cl, clsArgs);
+                }
 
-            defineClass.setAccessible(false);
-        } catch (NoSuchMethodException | ClassNotFoundException | IllegalAccessException |
-                 InvocationTargetException e) {
-            System.err.println("Couldn't access ClassLoader");
-            e.printStackTrace();
+                defineClass.setAccessible(false);
+            } catch (NoSuchMethodException | ClassNotFoundException | IllegalAccessException |
+                     InvocationTargetException e) {
+                System.err.println("Couldn't access ClassLoader");
+                e.printStackTrace();
+            }
         }
 
         // Set new port number using reflection

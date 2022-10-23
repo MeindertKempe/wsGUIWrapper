@@ -9,6 +9,7 @@ version '1.0-SNAPSHOT'
 
 ext {
     _mainClass = 'com.mkempe.wsguiwrapper.Main'
+    _javaAgent = 'com.mkempe.wsguiwrapper.Agent'
 }
 
 application {
@@ -31,7 +32,9 @@ jar {
     manifest {
         attributes(
                 'Main-Class': _mainClass,
-                'Class-Path': 'wsDisplay.jar'
+                'Class-Path': 'wsDisplay.jar',
+                'Launcher-Agent-Class': _javaAgent,
+                'Premain-Class': _javaAgent
         )
     }
 }
