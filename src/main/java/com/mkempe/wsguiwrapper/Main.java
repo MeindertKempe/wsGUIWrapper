@@ -62,36 +62,33 @@ public class Main {
             }
         }
 
-
-        ClassWriter wsDisplayCw = null;
-        ClassWriter ioServerCw = null;
-        ClassWriter ledMatrixCw = null;
-        try {
-            // Transform wsDisplayGUI
-            ClassReader wsDisplayCr = new ClassReader("wsGUI.wsDisplayGUI");
-//            wsDisplayCw = new ClassWriter(wsDisplayCr, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
-            wsDisplayCw = new ClassWriter(wsDisplayCr, 0);
-            wsDisplayCr.accept(new wsDisplayGuiAdapter(wsDisplayCw), 0);
-
-            // Transform IOServer
-            ClassReader ioServerCr = new ClassReader("wsGUI.IOServer");
-//            ioServerCw = new ClassWriter(ioServerCr, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
-            ioServerCw = new ClassWriter(ioServerCr, 0);
-            ioServerCr.accept(new IOServerAdapter(ioServerCw), 0);
-
-            // Transform LedMatrix
-            ClassReader ledMatrixCr = new ClassReader("modules.LedMatrix");
-            ledMatrixCw = new ClassWriter(ledMatrixCr, 0);
-            ledMatrixCr.accept(new LedMatrixAdapter(ledMatrixCw), 0);
-        } catch (IOException | NullPointerException e) {
-            System.err.println("Failed to transform bytecode");
-            e.printStackTrace();
-        }
-
-
         // If java agent didn't run (java 8 without -javaagent argument)
         // try using classloader instead
         if (!Agent.loaded()) {
+
+            ClassWriter wsDisplayCw = null;
+            ClassWriter ioServerCw = null;
+            ClassWriter ledMatrixCw = null;
+            try {
+                // Transform wsDisplayGUI
+                ClassReader wsDisplayCr = new ClassReader("wsGUI.wsDisplayGUI");
+                wsDisplayCw = new ClassWriter(wsDisplayCr, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
+                wsDisplayCr.accept(new wsDisplayGuiAdapter(wsDisplayCw), 0);
+
+                // Transform IOServer
+                ClassReader ioServerCr = new ClassReader("wsGUI.IOServer");
+                ioServerCw = new ClassWriter(ioServerCr, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
+                ioServerCr.accept(new IOServerAdapter(ioServerCw), 0);
+
+                // Transform LedMatrix
+                ClassReader ledMatrixCr = new ClassReader("modules.LedMatrix");
+                ledMatrixCw = new ClassWriter(ledMatrixCr, 0);
+                ledMatrixCr.accept(new LedMatrixAdapter(ledMatrixCw), 0);
+            } catch (IOException | NullPointerException e) {
+                System.err.println("Failed to transform bytecode");
+                e.printStackTrace();
+            }
+
             try {
                 // Use reflection to access ClassLoader defineClass
                 ClassLoader cl = ClassLoader.getSystemClassLoader();
