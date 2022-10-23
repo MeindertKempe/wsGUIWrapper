@@ -87,25 +87,80 @@ public class wsDisplayGuiAdapter extends ClassVisitor {
 
         @Override
         public void visitMethodInsn(int opcode, String owner, String name, String descriptor, boolean isInterface) {
-            if (Settings.getInstance().getTextColor() != null && owner.equals("wsGUI/wsDisplayGUI") &&
+            if (owner.equals("wsGUI/wsDisplayGUI") &&
                     name.equals("pack") && descriptor.equals("()V")) {
 
-                // TODO change button border color, maybe segment display border as well (maybe remove borders?)
+                // TODO change segment display border as well
+                Color bordercolor;
+                if ((bordercolor = Settings.getInstance().getBorderColor()) != null) {
+                    // Change button border color
+                    mv.visitFieldInsn(GETFIELD, owner, "pushButtonArrayOption1", "Lmodules/PushButtonArrayModule;");
+                    Util.insertAlphaColor(mv, bordercolor.getRed(), bordercolor.getGreen(), bordercolor.getBlue(), bordercolor.getAlpha());
+                    mv.visitMethodInsn(INVOKEVIRTUAL, "modules/PushButtonArrayModule", "setBackground", "(Ljava/awt/Color;)V", false);
+                    mv.visitVarInsn(ALOAD, 0);
 
+                    mv.visitFieldInsn(GETFIELD, owner, "pushButtonArrayOption2", "Lmodules/PushButtonArrayModule;");
+                    Util.insertAlphaColor(mv, bordercolor.getRed(), bordercolor.getGreen(), bordercolor.getBlue(), bordercolor.getAlpha());
+                    mv.visitMethodInsn(INVOKEVIRTUAL, "modules/PushButtonArrayModule", "setBackground", "(Ljava/awt/Color;)V", false);
+                    mv.visitVarInsn(ALOAD, 0);
 
-                // Change text color
-                Color textColor = Settings.getInstance().getTextColor();
-                mv.visitFieldInsn(GETFIELD, owner, "jLabel1", "Ljavax/swing/JLabel;");
-                Util.insertColor(mv, textColor.getRed(), textColor.getGreen(), textColor.getBlue());
-                mv.visitMethodInsn(INVOKEVIRTUAL, "javax/swing/JLabel", "setForeground", "(Ljava/awt/Color;)V", false);
+                    mv.visitFieldInsn(GETFIELD, owner, "pushButtonArrayOnOff", "Lmodules/PushButtonArrayModule;");
+                    Util.insertAlphaColor(mv, bordercolor.getRed(), bordercolor.getGreen(), bordercolor.getBlue(), bordercolor.getAlpha());
+                    mv.visitMethodInsn(INVOKEVIRTUAL, "modules/PushButtonArrayModule", "setBackground", "(Ljava/awt/Color;)V", false);
+                    mv.visitVarInsn(ALOAD, 0);
+                }
 
-                mv.visitVarInsn(ALOAD, 0);
-                mv.visitFieldInsn(GETFIELD, owner, "jLabel3", "Ljavax/swing/JLabel;");
-                Util.insertColor(mv, textColor.getRed(), textColor.getGreen(), textColor.getBlue());
-                mv.visitMethodInsn(INVOKEVIRTUAL, "javax/swing/JLabel", "setForeground", "(Ljava/awt/Color;)V", false);
+                Color textColor;
+                if ((textColor = Settings.getInstance().getTextColor()) != null) {
+                    // Change text color
+                    mv.visitFieldInsn(GETFIELD, owner, "jLabel1", "Ljavax/swing/JLabel;");
+                    Util.insertAlphaColor(mv, textColor.getRed(), textColor.getGreen(), textColor.getBlue(), textColor.getAlpha());
+                    mv.visitMethodInsn(INVOKEVIRTUAL, "javax/swing/JLabel", "setForeground", "(Ljava/awt/Color;)V", false);
+                    mv.visitVarInsn(ALOAD, 0);
 
-                mv.visitVarInsn(ALOAD, 0);
+                    mv.visitFieldInsn(GETFIELD, owner, "jLabel3", "Ljavax/swing/JLabel;");
+                    Util.insertAlphaColor(mv, textColor.getRed(), textColor.getGreen(), textColor.getBlue(), textColor.getAlpha());
+                    mv.visitMethodInsn(INVOKEVIRTUAL, "javax/swing/JLabel", "setForeground", "(Ljava/awt/Color;)V", false);
+                    mv.visitVarInsn(ALOAD, 0);
+                }
+
                 super.visitMethodInsn(opcode, owner, name, descriptor, isInterface);
+                return;
+            }
+
+            if (Settings.getInstance().addText() && owner.equals("java/awt/Container") &&
+                    name.equals("setLayout") && descriptor.equals("(Ljava/awt/LayoutManager;)V")) {
+
+                super.visitMethodInsn(opcode, owner, name, descriptor, isInterface);
+
+                mv.visitTypeInsn(NEW, "javax/swing/JLabel");
+                mv.visitInsn(DUP);
+                mv.visitInsn(DUP);
+                mv.visitMethodInsn(INVOKESPECIAL, "javax/swing/JLabel", "<init>", "()V", false);
+
+
+                mv.visitVarInsn(ALOAD, 0);
+                mv.visitMethodInsn(INVOKEVIRTUAL, "wsGUI/wsDisplayGUI", "getContentPane", "()Ljava/awt/Container;", false);
+                mv.visitInsn(SWAP);
+                mv.visitTypeInsn(NEW, "org/netbeans/lib/awtextra/AbsoluteConstraints");
+                mv.visitInsn(DUP);
+                mv.visitIntInsn(SIPUSH, 150);
+                mv.visitIntInsn(SIPUSH, 500);
+                mv.visitInsn(ICONST_M1);
+                mv.visitInsn(ICONST_M1);
+                mv.visitMethodInsn(INVOKESPECIAL, "org/netbeans/lib/awtextra/AbsoluteConstraints", "<init>", "(IIII)V", false);
+                mv.visitMethodInsn(INVOKEVIRTUAL, "java/awt/Container", "add", "(Ljava/awt/Component;Ljava/lang/Object;)V", false);
+
+                mv.visitInsn(DUP);
+                mv.visitLdcInsn(Settings.getInstance().getText());
+                mv.visitMethodInsn(INVOKEVIRTUAL, "javax/swing/JLabel", "setText", "(Ljava/lang/String;)V", false);
+
+                Color textColor;
+                if ((textColor = Settings.getInstance().getTextColor()) != null) {
+                    Util.insertAlphaColor(mv, textColor.getRed(), textColor.getGreen(), textColor.getBlue(), textColor.getAlpha());
+                    mv.visitMethodInsn(INVOKEVIRTUAL, "javax/swing/JLabel", "setForeground", "(Ljava/awt/Color;)V", false);
+                }
+
                 return;
             }
 

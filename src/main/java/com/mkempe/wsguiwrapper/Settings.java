@@ -47,6 +47,9 @@ public class Settings {
     private String background = null;
     private Color textColor = null;
     private Color matrixColor = null;
+    private Color borderColor = null;
+    private boolean addText = true;
+    private String text = "Modified by Meindert Kempe";
 
     private Settings() {
         Path config = Paths.get("config.toml");
@@ -83,10 +86,12 @@ public class Settings {
             this.port = port.intValue();
         }
 
-        //TODO verify that file exists
         String background = toml.getString("ui.background");
         if (background != null && !background.isEmpty()) {
-            this.background = background;
+            if ((new File(background)).exists())
+                this.background = background;
+            else
+                System.err.println("Config: Background image not found");
         }
 
 
@@ -94,8 +99,11 @@ public class Settings {
         Long textColorR = toml.getLong("ui.text_color.r");
         Long textColorG = toml.getLong("ui.text_color.g");
         Long textColorB = toml.getLong("ui.text_color.b");
+        Long textColorA = toml.getLong("ui.text_color.a");
         if (verifyColor(textColorR) && verifyColor(textColorG) && verifyColor(textColorB)) {
-            this.textColor = new Color(textColorR.intValue(), textColorG.intValue(), textColorB.intValue());
+            if (!verifyColor(textColorA))
+                textColorA = 0xffL;
+            this.textColor = new Color(textColorR.intValue(), textColorG.intValue(), textColorB.intValue(), textColorA.intValue());
         }
 
         Long matrixColorR = toml.getLong("ui.matrix_color.r");
@@ -103,6 +111,16 @@ public class Settings {
         Long matrixColorB = toml.getLong("ui.matrix_color.b");
         if (verifyColor(matrixColorR) && verifyColor(matrixColorG) && verifyColor(matrixColorB)) {
             this.matrixColor = new Color(matrixColorR.intValue(), matrixColorG.intValue(), matrixColorB.intValue());
+        }
+
+        Long borderColorR = toml.getLong("ui.button_border_color.r");
+        Long borderColorG = toml.getLong("ui.button_border_color.g");
+        Long borderColorB = toml.getLong("ui.button_border_color.b");
+        Long borderColorA = toml.getLong("ui.button_border_color.a");
+        if (verifyColor(borderColorR) && verifyColor(borderColorG) && verifyColor(borderColorB)) {
+            if (!verifyColor(borderColorA))
+                borderColorA = 0xffL;
+            this.borderColor = new Color(borderColorR.intValue(), borderColorG.intValue(), borderColorB.intValue(), borderColorA.intValue());
         }
     }
 
@@ -128,5 +146,17 @@ public class Settings {
 
     public Color getMatrixColor() {
         return matrixColor;
+    }
+
+    public Color getBorderColor() {
+        return borderColor;
+    }
+
+    public boolean addText() {
+        return addText;
+    }
+
+    public String getText() {
+        return text;
     }
 }

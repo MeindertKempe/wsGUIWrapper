@@ -44,4 +44,14 @@ public class Util {
         mv.visitIntInsn(SIPUSH, b);
         mv.visitMethodInsn(INVOKESPECIAL, "java/awt/Color", "<init>", "(III)V", false);
     }
+
+    public static void insertAlphaColor(MethodVisitor mv, int r, int g, int b, int a) {
+        mv.visitTypeInsn(NEW, "java/awt/Color");
+        mv.visitInsn(DUP);
+        mv.visitIntInsn(SIPUSH, r);
+        mv.visitIntInsn(SIPUSH, g);
+        mv.visitIntInsn(SIPUSH, b);
+        mv.visitIntInsn(SIPUSH, a);
+        mv.visitMethodInsn(INVOKESPECIAL, "java/awt/Color", "<init>", "(IIII)V", false);
+    }
 }
