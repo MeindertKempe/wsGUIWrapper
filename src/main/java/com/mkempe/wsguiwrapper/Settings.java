@@ -49,7 +49,7 @@ public class Settings {
     private Color matrixColor = null;
     private Color borderColor = null;
     private boolean addText = true;
-    private String text = "Modified by Meindert Kempe";
+    private String text = "Modified by wsGUIWrapper using ASM";
 
     private Settings() {
         Path config = Paths.get("config.toml");
