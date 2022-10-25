@@ -82,7 +82,7 @@ public class Main {
 
                 // Transform LedMatrix
                 ClassReader ledMatrixCr = new ClassReader("modules.LedMatrix");
-                ledMatrixCw = new ClassWriter(ledMatrixCr, 0);
+                ledMatrixCw = new ClassWriter(ledMatrixCr, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
                 ledMatrixCr.accept(new LedMatrixAdapter(ledMatrixCw), 0);
             } catch (IOException | NullPointerException e) {
                 System.err.println("Failed to transform bytecode");
